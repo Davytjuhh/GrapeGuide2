@@ -10,6 +10,14 @@
             background-color: #f4f4f9;
             margin: 0;
             padding: 0;
+            display: flex;
+        }
+        .filter {
+            margin-right: 20px;
+            padding: 10px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         .container {
             width: 90%;
@@ -52,46 +60,68 @@
 </head>
 <body>
 
-    <h1 style="text-align: center;">Wine Classification Results</h1>
+    <div class="filter">
+        <h2>Filter</h2>
+        <label>
+            <input type="checkbox" id="filterCheckbox" />
+            Show wines with Highest Score > 0.5
+        </label>
+    </div>
+    
     <div class="container" id="wineContainer"></div>
 
     <script>
         // Fetch the wine data from the JSON file
-        fetch('wine_classification_results_first_10.json')
+        fetch('wine_classification_results_first_100.json')
             .then(response => response.json())
             .then(wineData => {
                 const container = document.getElementById('wineContainer');
+                const filterCheckbox = document.getElementById('filterCheckbox');
 
-                wineData.forEach(wine => {
-                    const card = document.createElement('div');
-                    card.classList.add('card');
+                function renderWines() {
+                    // Clear previous results
+                    container.innerHTML = '';
+                    
+                    wineData.forEach(wine => {
+                        // Check if the filter is applied
+                        if (!filterCheckbox.checked || (filterCheckbox.checked && wine.Highest_Score > 0.5)) {
+                            const card = document.createElement('div');
+                            card.classList.add('card');
 
-                    const title = document.createElement('h2');
-                    title.classList.add('wine-title');
-                    title.textContent = wine.Title;
+                            const title = document.createElement('h2');
+                            title.classList.add('wine-title');
+                            title.textContent = wine.Title;
 
-                    const description = document.createElement('p');
-                    description.classList.add('wine-description');
-                    description.textContent = wine.Description;
+                            const description = document.createElement('p');
+                            description.classList.add('wine-description');
+                            description.textContent = wine.Description;
 
-                    const scoresDiv = document.createElement('div');
-                    scoresDiv.classList.add('scores');
-                    for (const [category, score] of Object.entries(wine.Scores)) {
-                        const scoreP = document.createElement('p');
-                        scoreP.textContent = `${category}: ${score.toFixed(2)}`;
-                        scoresDiv.appendChild(scoreP);
-                    }
+                            const scoresDiv = document.createElement('div');
+                            scoresDiv.classList.add('scores');
+                            for (const [category, score] of Object.entries(wine.Scores)) {
+                                const scoreP = document.createElement('p');
+                                scoreP.textContent = `${category}: ${score.toFixed(2)}`;
+                                scoresDiv.appendChild(scoreP);
+                            }
 
-                    const highestScore = document.createElement('p');
-                    highestScore.classList.add('highest-score');
-                    highestScore.textContent = `Highest Pairing: ${wine.Highest_Label} (${wine.Highest_Score.toFixed(2)})`;
+                            const highestScore = document.createElement('p');
+                            highestScore.classList.add('highest-score');
+                            highestScore.textContent = `Highest Pairing: ${wine.Highest_Label} (${wine.Highest_Score.toFixed(2)})`;
 
-                    card.appendChild(title);
-                    card.appendChild(description);
-                    card.appendChild(scoresDiv);
-                    card.appendChild(highestScore);
-                    container.appendChild(card);
-                });
+                            card.appendChild(title);
+                            card.appendChild(description);
+                            card.appendChild(scoresDiv);
+                            card.appendChild(highestScore);
+                            container.appendChild(card);
+                        }
+                    });
+                }
+
+                // Initial render of wines
+                renderWines();
+
+                // Add event listener for checkbox change
+                filterCheckbox.addEventListener('change', renderWines);
             })
             .catch(error => console.error('Error loading wine data:', error));
     </script>
