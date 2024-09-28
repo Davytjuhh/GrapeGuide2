@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wine Classification Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 90%;
+            margin: 20px auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .wine-title {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .wine-description {
+            font-size: 1em;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .scores {
+            margin-bottom: 10px;
+        }
+        .scores p {
+            margin: 5px 0;
+        }
+        .highest-score {
+            font-weight: bold;
+            color: #d9534f;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 style="text-align: center;">Wine Classification Results</h1>
+    <div class="container" id="wineContainer"></div>
+
+    <script>
+        // Fetch the wine data from the JSON file
+        fetch('wine_classification_results_first_10.json')
+            .then(response => response.json())
+            .then(wineData => {
+                const container = document.getElementById('wineContainer');
+
+                wineData.forEach(wine => {
+                    const card = document.createElement('div');
+                    card.classList.add('card');
+
+                    const title = document.createElement('h2');
+                    title.classList.add('wine-title');
+                    title.textContent = wine.Title;
+
+                    const description = document.createElement('p');
+                    description.classList.add('wine-description');
+                    description.textContent = wine.Description;
+
+                    const scoresDiv = document.createElement('div');
+                    scoresDiv.classList.add('scores');
+                    for (const [category, score] of Object.entries(wine.Scores)) {
+                        const scoreP = document.createElement('p');
+                        scoreP.textContent = `${category}: ${score.toFixed(2)}`;
+                        scoresDiv.appendChild(scoreP);
+                    }
+
+                    const highestScore = document.createElement('p');
+                    highestScore.classList.add('highest-score');
+                    highestScore.textContent = `Highest Pairing: ${wine.Highest_Label} (${wine.Highest_Score.toFixed(2)})`;
+
+                    card.appendChild(title);
+                    card.appendChild(description);
+                    card.appendChild(scoresDiv);
+                    card.appendChild(highestScore);
+                    container.appendChild(card);
+                });
+            })
+            .catch(error => console.error('Error loading wine data:', error));
+    </script>
+
+</body>
+</html>
