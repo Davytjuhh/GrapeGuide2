@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wine Details</title>
+    <style>
+        /* General body styling */
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Container for the wine details */
+        .wine-details-container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        /* Title section styling */
+        .wine-title {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        /* Description section styling */
+        .wine-description {
+            font-size: 1.2em;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            padding: 0;
+            line-height: 1.8;
+        }
+
+        /* Layout for wine details, using grid for clean spacing */
+        .wine-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        /* Individual sections inside the grid */
+        .wine-scores, .highest-score-section {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .wine-scores p, .highest-score-section p {
+            margin: 5px 0;
+        }
+
+        /* Styling for the highest score */
+        .highest-score-section p {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+
+        /* "Back to list" link */
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-link:hover {
+            background-color: #2980b9;
+        }
+
+        /* Responsive layout */
+        @media (max-width: 768px) {
+            .wine-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wine-details-container">
+        <!-- Title of the wine -->
+        <h1 class="wine-title" id="wineTitle">Wine Title</h1>
+
+        <!-- Description of the wine -->
+        <p class="wine-description" id="wineDescription">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam ultricies sem at fermentum pharetra. In consequat felis non nunc convallis maximus.</p>
+
+        <!-- Wine info section in a grid layout -->
+        <div class="wine-info">
+            <!-- Wine Scores -->
+            <div class="wine-scores" id="wineScores">
+                <h2>Scores</h2>
+                <!-- Scores will be injected here -->
+            </div>
+
+            <!-- Highest pairing section -->
+            <div class="highest-score-section">
+                <h2>Highest Pairing</h2>
+                <p id="highestPairing">Highest Pairing: None (0.00)</p>
+            </div>
+        </div>
+
+        <!-- Back to wine list -->
+        <a href="index.html" class="back-link">← Back to Wine List</a>
+    </div>
+
+    <script>
+        // Function to get the wine ID from the URL
+        function getWineIdFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('id'); // Get the 'id' query parameter
+        }
+
+        // Fetch the wine data and display the details for the clicked wine
+        fetch('wine_classification_results_first_100.json')
+            .then(response => response.json())
+            .then(wineData => {
+                const wineId = getWineIdFromUrl(); // Get the wine ID from the URL
+                const wine = wineData[wineId]; // Get the specific wine based on the ID
+
+                if (!wine) {
+                    document.getElementById('wineTitle').textContent = 'Wine not found!';
+                    return;
+                }
+
+                // Inject the wine details into the HTML
+                document.getElementById('wineTitle').textContent = wine.Title;
+                document.getElementById('wineDescription').textContent = wine.Description;
+
+                // Inject wine scores
+                const wineScoresDiv = document.getElementById('wineScores');
+                wineScoresDiv.innerHTML = Object.entries(wine.Scores)
+                    .map(([category, score]) => `<p>${category}: ${score.toFixed(2)}</p>`)
+                    .join('');
+
+                // Inject highest pairing
+                document.getElementById('highestPairing').textContent = `Highest Pairing: ${wine.Highest_Label} (${wine.Highest_Score.toFixed(2)})`;
+            })
+            .catch(error => {
+                console.error('Error loading wine data:', error);
+                document.getElementById('wineTitle').textContent = 'Error loading wine details.';
+            });
+    </script>
+
+</body>
+</html>
