@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wine Classification Results</title>
     <style>
+        /* Basic page styling */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
@@ -12,6 +13,7 @@
             padding: 0;
             display: flex;
         }
+        /* Styling for the filter section */
         .filter {
             margin-right: 20px;
             padding: 10px;
@@ -19,13 +21,15 @@
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+        /* Grid container for wine cards */
         .container {
             width: 90%;
             margin: 20px auto;
-            display: grid;
+            display: grisd;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
         }
+        /* Styling for individual wine cards */
         .card {
             background-color: white;
             border-radius: 8px;
@@ -33,25 +37,30 @@
             padding: 20px;
             transition: transform 0.2s;
         }
+        /* Add a hover effect for the card */
         .card:hover {
             transform: translateY(-5px);
         }
+        /* Styling for wine title */
         .wine-title {
             font-size: 1.5em;
             margin-bottom: 10px;
             color: #333;
         }
+        /* Styling for wine description */
         .wine-description {
             font-size: 1em;
             color: #666;
             margin-bottom: 10px;
         }
+        /* Styling for score section */
         .scores {
             margin-bottom: 10px;
         }
         .scores p {
             margin: 5px 0;
         }
+        /* Styling for highest score highlight */
         .highest-score {
             font-weight: bold;
             color: #d9534f;
@@ -60,58 +69,70 @@
 </head>
 <body>
 
+    <!-- Filter Section -->
     <div class="filter">
         <h2>Filter</h2>
         <label>
+            <!-- Checkbox to filter wines with Highest Score > 0.5 -->
             <input type="checkbox" id="filterCheckbox" />
             Show wines with Highest Score > 0.5
         </label>
     </div>
     
+    <!-- Container for displaying wine cards -->
     <div class="container" id="wineContainer"></div>
 
     <script>
         // Fetch the wine data from the JSON file
         fetch('wine_classification_results_first_100.json')
-            .then(response => response.json())
-            .then(wineData => {
-                const container = document.getElementById('wineContainer');
-                const filterCheckbox = document.getElementById('filterCheckbox');
+            .then(response => response.json()) // Convert the response to JSON
+            .then(wineData => { // Once data is loaded
+                const container = document.getElementById('wineContainer'); // Get the container element for wine cards
+                const filterCheckbox = document.getElementById('filterCheckbox'); // Get the filter checkbox element
 
+                // Function to render the wines on the page
                 function renderWines() {
-                    // Clear previous results
-                    container.innerHTML = '';
+                    container.innerHTML = ''; // Clear the container before rendering new wine cards
                     
+                    // Loop through the wine data
                     wineData.forEach(wine => {
-                        // Check if the filter is applied
+                        // Check if the filter is applied or not
                         if (!filterCheckbox.checked || (filterCheckbox.checked && wine.Highest_Score > 0.5)) {
-                            const card = document.createElement('div');
-                            card.classList.add('card');
+                            const card = document.createElement('div'); // Create a new card element
+                            card.classList.add('card'); // Add 'card' styling to it
 
+                            // Create and add the wine title element
                             const title = document.createElement('h2');
                             title.classList.add('wine-title');
                             title.textContent = wine.Title;
 
+                            // Create and add the wine description element
                             const description = document.createElement('p');
                             description.classList.add('wine-description');
                             description.textContent = wine.Description;
 
+                            // Create and add the scores section
                             const scoresDiv = document.createElement('div');
                             scoresDiv.classList.add('scores');
+                            // Loop through the scores and add them to the card
                             for (const [category, score] of Object.entries(wine.Scores)) {
                                 const scoreP = document.createElement('p');
-                                scoreP.textContent = `${category}: ${score.toFixed(2)}`;
+                                scoreP.textContent = `${category}: ${score.toFixed(2)}`; // Show category and score
                                 scoresDiv.appendChild(scoreP);
                             }
 
+                            // Create and add the highest score element
                             const highestScore = document.createElement('p');
                             highestScore.classList.add('highest-score');
                             highestScore.textContent = `Highest Pairing: ${wine.Highest_Label} (${wine.Highest_Score.toFixed(2)})`;
 
+                            // Append all the created elements to the card
                             card.appendChild(title);
                             card.appendChild(description);
                             card.appendChild(scoresDiv);
                             card.appendChild(highestScore);
+
+                            // Add the card to the container
                             container.appendChild(card);
                         }
                     });
@@ -120,10 +141,10 @@
                 // Initial render of wines
                 renderWines();
 
-                // Add event listener for checkbox change
+                // Add event listener to re-render wines when the filter changes
                 filterCheckbox.addEventListener('change', renderWines);
             })
-            .catch(error => console.error('Error loading wine data:', error));
+            .catch(error => console.error('Error loading wine data:', error)); // Handle any errors during data fetch
     </script>
 
 </body>
