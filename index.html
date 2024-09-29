@@ -47,6 +47,15 @@
             margin-bottom: 10px;
             color: #333;
         }
+<<<<<<< Updated upstream
+=======
+        .wine-card-link {
+        display: block; /* Make the anchor a block-level element */
+        text-decoration: none; /* Remove underline */
+        color: inherit; /* Ensure the text color inside the <a> tag inherits */
+        }
+
+>>>>>>> Stashed changes
         /* Styling for wine description */
         .wine-description {
             font-size: 1em;
@@ -95,12 +104,26 @@
                     container.innerHTML = ''; // Clear the container before rendering new wine cards
                     
                     // Loop through the wine data
+<<<<<<< Updated upstream
                     wineData.forEach(wine => {
+=======
+                    wineData.forEach((wine, index) => {
+>>>>>>> Stashed changes
                         // Check if the filter is applied or not
                         if (!filterCheckbox.checked || (filterCheckbox.checked && wine.Highest_Score > 0.5)) {
                             const card = document.createElement('div'); // Create a new card element
                             card.classList.add('card'); // Add 'card' styling to it
 
+<<<<<<< Updated upstream
+=======
+                            card.style.cursor = 'pointer'; // Make the card look clickable
+
+                            // Add an onclick event to handle navigation
+                            card.onclick = function() {
+                                window.location.href = `wine-detail.html?id=${index}`;
+                            };
+
+>>>>>>> Stashed changes
                             // Create and add the wine title element
                             const title = document.createElement('h2');
                             title.classList.add('wine-title');
