@@ -124,37 +124,68 @@
             const params = new URLSearchParams(window.location.search);
             return params.get('id'); // Get the 'id' query parameter
         }
-
+    
+        // Function to find the highest pairing
+        function getHighestPairing(wine) {
+            const pairings = {
+                "Meat": wine.meat,
+                "Vegetables": wine.vegetables,
+                "Poultry": wine.poultry,
+                "Cheese": wine.cheese,
+                "Fish": wine.fish,
+                "Pasta": wine.pasta
+            };
+    
+            let highestPairing = "None";
+            let highestScore = 0;
+    
+            for (let [label, score] of Object.entries(pairings)) {
+                if (score > highestScore) {
+                    highestScore = score;
+                    highestPairing = label;
+                }
+            }
+    
+            return { highestPairing, highestScore };
+        }
+    
         // Fetch the wine data and display the details for the clicked wine
-        fetch('wine_classification_results_first_100.json')
+        fetch('WineDataset.json')
             .then(response => response.json())
             .then(wineData => {
                 const wineId = getWineIdFromUrl(); // Get the wine ID from the URL
                 const wine = wineData[wineId]; // Get the specific wine based on the ID
-
+    
                 if (!wine) {
                     document.getElementById('wineTitle').textContent = 'Wine not found!';
                     return;
                 }
-
+    
                 // Inject the wine details into the HTML
                 document.getElementById('wineTitle').textContent = wine.Title;
                 document.getElementById('wineDescription').textContent = wine.Description;
-
-                // Inject wine scores
+    
+                // Inject wine pairings as scores
                 const wineScoresDiv = document.getElementById('wineScores');
-                wineScoresDiv.innerHTML = Object.entries(wine.Scores)
-                    .map(([category, score]) => `<p>${category}: ${score.toFixed(2)}</p>`)
-                    .join('');
-
-                // Inject highest pairing
-                document.getElementById('highestPairing').textContent = `Highest Pairing: ${wine.Highest_Label} (${wine.Highest_Score.toFixed(2)})`;
+                wineScoresDiv.innerHTML = `
+                    <p>Meat: ${wine.meat.toFixed(2)}</p>
+                    <p>Vegetables: ${wine.vegetables.toFixed(2)}</p>
+                    <p>Poultry: ${wine.poultry.toFixed(2)}</p>
+                    <p>Cheese: ${wine.cheese.toFixed(2)}</p>
+                    <p>Fish: ${wine.fish.toFixed(2)}</p>
+                    <p>Pasta: ${wine.pasta.toFixed(2)}</p>
+                `;
+    
+                // Calculate and display highest pairing
+                const { highestPairing, highestScore } = getHighestPairing(wine);
+                document.getElementById('highestPairing').textContent = `Highest Pairing: ${highestPairing} (${highestScore.toFixed(2)})`;
             })
             .catch(error => {
                 console.error('Error loading wine data:', error);
                 document.getElementById('wineTitle').textContent = 'Error loading wine details.';
             });
     </script>
+    
 
 </body>
 </html>
