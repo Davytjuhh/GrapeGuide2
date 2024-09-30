@@ -1,1 +1,2 @@
-# GrapeGuide2
+# When opening the website, make sure to use a browser with CORS turned off, or you will encounter a CORS error. 
+# For example, run Chrome using (Win + R) with the following command to disable web security: chrome.exe --user-data-dir="C://Chrome dev session" --disable-web-security.
